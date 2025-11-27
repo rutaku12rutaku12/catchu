@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1043471949698",
+    "project_id": "catchu-bfb54",
+    "storage_bucket": "catchu-bfb54.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1043471949698:android:bf46ed7afc62930a15399b",
+        "android_client_info": {
+          "package_name": "com.choikyuho.catchu"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMQSVsR_a3jOeHDWCb4w411vpmcRSTj-k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
