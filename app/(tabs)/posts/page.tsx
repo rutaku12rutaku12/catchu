@@ -1,25 +1,11 @@
+import { PostDto} from "@/types/post";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { Dimensions ,StyleSheet, View , Text, FlatList} from "react-native";
 
-export default function HomeScreen() {
+export default function Posts() {
 
-  const [posts, setPosts] = useState<{id: number; title: string}[]> ([]);
-
-//     useEffect(() => {
-//       setPosts([
-//         {id:1, title:"게시글1"},
-//         {id:2, title:"게시글2"},
-//         {id:3, title:"게시글3"},
-//         {id:4, title:"게시글4"},
-//         {id:5, title:"게시글5"},
-//         {id:6, title:"게시글6"},
-//         {id:7, title:"게시글7"},
-//         {id:8, title:"게시글8"},
-//         {id:9, title:"게시글9"},
-//         {id:10, title:"게시글10"},
-//   ]);
-// },[]);
+  const [posts, setPosts] = useState<PostDto[]>([]);
 
 useEffect(()=> {
   const fetchPosts = async () => {
@@ -40,22 +26,22 @@ useEffect(()=> {
   return (<>
     <View style={styles.postsContainer}>
       <FlatList
-      data={posts}
-      keyExtractor={post => post.id.toString()}
-      contentContainerStyle={styles.listWrap}
-      renderItem={({item}) => (
-        <View style={styles.postItem}>
-          <Text style={styles.postId}>{item.id}번 게시글</Text>
-          <Link
-            href={{
-              pathname: `/posts/[id]/post`,
-              params: {
-                userId: item.userId,
-                id: item.id,
-                title: item.title,
-                body: item.body,
-              },
-            }}
+        data={posts}
+        keyExtractor={(post) => post.id.toString()}
+        contentContainerStyle={styles.listWrap}
+        renderItem={({item}) => (
+          <View style={styles.postItem}>
+            <Text style={styles.postId}>{item.id}번 게시글 </Text>
+            <Link
+              href={{
+                pathname: `/posts/[id]/post`,
+                params: {
+                  userId: item.userId,
+                  id: item.id,
+                  title: item.title,
+                  body: item.body,
+                },
+              }}
           >
           <Text style={styles.postTitle}>{item.title}</Text>
           </Link>

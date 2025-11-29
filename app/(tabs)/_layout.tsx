@@ -1,4 +1,4 @@
-import { Tabs } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
 import React from 'react';
 
 import { HapticTab } from '@/components/haptic-tab';
@@ -7,6 +7,9 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function TabLayout() {
+
+  const router = useRouter();
+
   const colorScheme = useColorScheme();
 
   return (
@@ -49,6 +52,12 @@ export default function TabLayout() {
         options={{
           title: '글상세/댓글',
           tabBarIcon: ({ focused }) => <Ionicons name="newspaper" size={24} color={focused ? "black":"gray"} />,
+        }}
+        listeners={{ // 탭을 눌렀을 때의 동작을 정의
+          tabPress: (e)=>{
+            e.preventDefault();
+            router.replace("/(tabs)/posts/page");
+          },
         }}
       />
     </Tabs>
