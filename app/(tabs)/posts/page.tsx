@@ -2,24 +2,40 @@ import { PostDto} from "@/types/post";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { Dimensions ,StyleSheet, View , Text, FlatList} from "react-native";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { db } from "@/firebase/config";
 
 export default function Posts() {
 
-  const [posts, setPosts] = useState<PostDto[]>([]);
+  const [posts, setPosts] = useState<PostDto[] | null>(null);
+
+  const fetchPosts = async () => {
+    try{
+      const postsQuery = query(
+        collection(db, "post"), // post 테이블을 조회
+        orderBy("postId","desc")
+    ); 
+
+      // getDocs : firestore에서 데이터를 가져오는 함수
+      const postsSnapshot = await getDocs(postsQuery);
+
+      const postsData = postsSnapshot.docs.map((doc) => {
+        const {postId,createDate,title,content} = doc.data();
+        return{
+          id: doc.id, // 파이어베이스 문서 ID
+          postId: postId,
+          createDate : createDate,
+          title: title,
+          content:content,
+        }
+      })
+      setPosts(postsData);
+    }catch(error){
+      console.log(error);
+    }
+  };
 
 useEffect(()=> {
-  const fetchPosts = async () => {
-    const response = await fetch(
-      "https://jsonplaceholder.typicode.com/posts"
-    );
-    console.log(response);
-
-    const data = await response.json();
-    
-    console.log(data);
-
-    setPosts(data);
-  };
   fetchPosts();
 }, []);
 
@@ -31,15 +47,14 @@ useEffect(()=> {
         contentContainerStyle={styles.listWrap}
         renderItem={({item}) => (
           <View style={styles.postItem}>
-            <Text style={styles.postId}>{item.id}번 게시글 </Text>
+            <Text style={styles.postId}>{item.postId}번 게시글 </Text>
             <Link
               href={{
                 pathname: `/posts/[id]/post`,
                 params: {
-                  userId: item.userId,
+                  postId: item.postId,
                   id: item.id,
-                  title: item.title,
-                  body: item.body,
+                
                 },
               }}
           >

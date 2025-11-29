@@ -1,8 +1,10 @@
 export interface PostDto {
-    userId: number;
-    id: number;
+    
+    id: string;
+    postId: number;
+    createDate:Date;
     title: string;
-    body: string;
+    content: string;
 };
 
 export interface PostWithContentDto extends PostDto {
