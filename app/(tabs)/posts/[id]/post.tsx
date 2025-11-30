@@ -6,7 +6,7 @@ import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { StyleSheet, View, Text, Dimensions, Pressable } from "react-native";
 export default function Post() {
-    const router =useRouter();
+    const router = useRouter();
     // useLocalSearchParams 동적 라우팅을 위한 파라미터를 가져오는 함수
     // 파라미터값을 문자열로 취급
     const {postId, }= useLocalSearchParams();
@@ -71,6 +71,15 @@ export default function Post() {
                         </View>
                         <View style={styles.contentBodyWrap}>
                             <Text style={styles.postBody}>{post?.content}</Text>
+                        </View>
+                        <View style={styles.contentFooter}>
+                            <Pressable onPress={()=> console.log("recommend")} style={styles.contentFooterItem}>
+                                <Ionicons name="thumbs-up-sharp" size={18} color="black" />
+                                <Text>추천</Text>
+                            </Pressable>
+                            <Pressable onPress={()=> console.log("save")} style={styles.contentFooterItem} >
+                                <Text>저장</Text>
+                            </Pressable>
                         </View>
                     </View>
                 </View>
@@ -158,6 +167,21 @@ const styles = StyleSheet.create({
         postBodyContainer:{
             marginTop: 5,
         },
+    contentFooter:{
+        flexDirection: "row",
+        justifyContent: "space-between",
+        gap:10,   
+    },
+    contentFooterItem:{
+        flexDirection: "row",
+        alignItems: "center",
+        gap:5,
+        borderWidth: 1,
+        borderColor: "#ccc",
+        borderRadius: 20,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+    },
     contentBodyWrap:{
         flex:1,
     },
@@ -173,8 +197,6 @@ const styles = StyleSheet.create({
     postReplyInner:{
         padding: 10,
         flex:1,
-        justifyContent:"center",
-        alignItems:"center",
     },
     postReplyContent:{
         flex:1,
