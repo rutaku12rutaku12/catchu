@@ -2,35 +2,48 @@ import { db } from "@/firebase/config";
 import { PostWithContentDto } from "@/types/post";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { StyleSheet, View, Text, Dimensions, Pressable } from "react-native";
 export default function Post() {
+
     const router = useRouter();
     // useLocalSearchParams 동적 라우팅을 위한 파라미터를 가져오는 함수
     // 파라미터값을 문자열로 취급
-    const {postId, }= useLocalSearchParams();
+    const { id }= useLocalSearchParams();
 
     const [post, setPost] = useState<PostWithContentDto | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const fetchPost = async () => {
         try{
-          const postsQuery = query(
-            collection(db, "post"), // post 테이블을 조회
-            where("postId","==", Number(postId)) 
-        ); 
-    
+          // firebase 문서 참조 방식
+          const postRef = doc(db, "post", id as string);  
           // getDocs : firestore에서 데이터를 가져오는 함수
-          const postsSnapshot = await getDocs(postsQuery);
+          const postsSnap = await getDoc(postRef);
     
-          const post = postsSnapshot.docs[0].data();
-          console.log(post);
-          // post as PostWithContentDto : 타입 캐스팅
-          setPost(post as PostWithContentDto);
+          if(postsSnap.exists()){
+            const post = postsSnap.data() as PostWithContentDto;
+            setPost(post);
+          }
         }catch(error){
-          console.log(error);
+          console.log("오류 발생: " + error);
+          setError("오류 발생");
         }
       };
+
+      useEffect(()=>{
+        fetchPost();
+      }, []);
+
+    // 가드 클로즈 패턴
+    if (!post){
+        return (
+        <View style={styles.postContainer}>
+            <Text style={styles.loadingText}>로딩중···</Text>
+        </View>
+        );
+    }
 
     return(
         <View style={styles.postContainer}>
@@ -113,6 +126,13 @@ const styles = StyleSheet.create({
         margin: 60,
         gap:5,
     },
+    loadingText:{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize:20,
+    fontWeight:"bold",
+  },
     postInner:{
         width: WIDTH,
         backgroundColor: "#fff",
