@@ -2,7 +2,7 @@ import { PostDto} from "@/types/post";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { Dimensions ,StyleSheet, View , Text, FlatList} from "react-native";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query, Timestamp } from "firebase/firestore";
 import { db } from "@/firebase/config";
 
 export default function Posts() {
@@ -13,37 +13,34 @@ export default function Posts() {
   const fetchPosts = async () => {
     try{
       const postsQuery = query(
-        collection(db, "post"), // post 테이블을 조회
-        orderBy("postId","desc")
-    ); 
+        collection(db, "post"),
+        orderBy("createDate","desc")
+      ); 
 
-      // getDocs : firestore에서 데이터를 가져오는 함수
-      const postsSnapshot = await getDocs(postsQuery);
-
-      const postsData = postsSnapshot.docs.map((doc) => {
-        const {postId,createDate,title,content} = doc.data();
-        return{
-          id: doc.id, // 파이어베이스 문서 ID
-          postId: postId,
-          createDate : createDate,
-          title: title,
-          content:content,
-        }
-      })
-      setPosts(postsData);
+      await onSnapshot(postsQuery, (snapShot) => {
+        const postsData = snapShot.docs.map((doc) => {
+          const { createDate, title, content } = doc.data();
+          
+          return {
+            id: doc.id,
+            createDate: createDate as Timestamp,
+            title: title,
+            content: content,
+          };
+        });
+        
+        setPosts(postsData);
+      });
     }catch(error){
-          console.log("오류 발생: " + error);
-          setError("오류 발생");
-        }
-      };
+      console.log("오류 발생: " + error);
+      setError("오류 발생");
+    }
+  };
 
-    
+  useEffect(()=> {
+    fetchPosts();
+  }, []);
 
-useEffect(()=> {
-  fetchPosts();
-}, []);
-
-  // 가드 클로즈 패턴
   if (!posts){
     return (
       <View style={styles.postsContainer}>
@@ -52,7 +49,7 @@ useEffect(()=> {
     );
   }
 
-  return (<>
+  return (
     <View style={styles.postsContainer}>
       <FlatList
         data={posts}
@@ -60,24 +57,21 @@ useEffect(()=> {
         contentContainerStyle={styles.listWrap}
         renderItem={({item}) => (
           <View style={styles.postItem}>
-            <Text style={styles.postId}>{item.postId}번 게시글 </Text>
             <Link
               href={{
-                pathname: `/posts/[id]/post`,
+                pathname: "/(tabs)/posts/[id]/post",
                 params: {
-                  postId: item.postId,
                   id: item.id,
-                
                 },
               }}
-          >
-          <Text style={styles.postTitle}>{item.title}</Text>
-          </Link>
-        </View>
-      )}
-     />
+            >
+              <Text style={styles.postTitle}>{item.title}</Text>
+            </Link>
+          </View>
+        )}
+      />
     </View>
-  </>);
+  );
 }
 
 const WIDTH = Dimensions.get("window").width;
@@ -106,7 +100,8 @@ const styles = StyleSheet.create({
   },
   postTitle:{
     fontSize:16,
-    marginTop:5,},
+    marginTop:5,
+  },
   postItem:{
     flexDirection:"row",
     alignItems: "center",

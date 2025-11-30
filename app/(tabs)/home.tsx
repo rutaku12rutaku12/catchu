@@ -1,5 +1,9 @@
-import PostWriteForm from "@/components/post-write-form";
+import { Text, View } from "react-native";
 
-export default function Write() {
-  return <PostWriteForm />;
+export default function Home() {
+  return (
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Text>catchU Home</Text>
+    </View>
+  );
 }
