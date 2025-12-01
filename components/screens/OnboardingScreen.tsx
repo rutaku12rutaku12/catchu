@@ -1,22 +1,25 @@
 import CreateAccountForm from "@/components/forms/CreateAccountForm";
+import LoginForm from "@/components/forms/LoginForm";
 import { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function OnboardingScreen() {
     const [showCreateAccount, setShowCreateAccount] = useState(false);
+    const [showLogin, setShowLogin] = useState(false); // 로그인 상태
 
-    // 시작하기 버튼 클릭 시 실행함수
+    // 시작하기 버튼 클릭 시
     const handleCreateAccount = () => {
         setShowCreateAccount(true);
     };
 
-    // 로그인 클릭시 실행함수
+    // 로그인 클릭시
     const handleLogin = () => {
-        console.log("로그인");
+        setShowLogin(true);
     };
 
-    if( showCreateAccount ) {
+    // 회원가입 화면 표시
+    if (showCreateAccount) {
         return (
             <CreateAccountForm
                 onBack={() => setShowCreateAccount(false)}
@@ -25,32 +28,45 @@ export default function OnboardingScreen() {
         );
     }
 
+    // 로그인 화면 표시
+    if (showLogin) {
+        return (
+            <LoginForm
+                onSignupPress={() => {
+                    setShowLogin(false);
+                    setShowCreateAccount(true);
+                }}
+            />
+        );
+    }
+
+    // 기본 온보딩 화면
     return (
-    <SafeAreaView style={styles.container}>
-      <View>
-        <Text style={styles.title}>캐치유를 Play해 보세요!</Text>
-      </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleCreateAccount}>
-          <Text style={styles.buttonText}>시작하기</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, styles.loginButton]} onPress={handleLogin}>
-          <Text style={styles.buttonText}>로그인</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
-  );
+        <SafeAreaView style={styles.container}>
+            <View>
+                <Text style={styles.title}>캐치유를 Play해 보세요!</Text>
+            </View>
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.button} onPress={handleCreateAccount}>
+                    <Text style={styles.buttonText}>회원가입</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.button, styles.loginButton]} onPress={handleLogin}>
+                    <Text style={styles.buttonText}>로그인</Text>
+                </TouchableOpacity>
+            </View>
+        </SafeAreaView>
+    );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black',
+    backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
   },
   title: {
-    color: 'white',
+    color: 'black',
     fontSize: 24,
     marginBottom: 20,
   },

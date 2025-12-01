@@ -87,8 +87,14 @@ export default function CreateAccountForm({
 
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      Alert.alert("회원가입이 완료되었습니다.");
-      router.replace("/"); // 가입후 홈으로 이동
+      // 회원가입 후 자동 로그아웃
+      await auth.signOut();
+      
+      Alert.alert(
+      "회원가입 완료되었습니다.", 
+      "로그인해주세요.",
+      [{ text: "확인", onPress: () => onSuccess() }]
+    );
     } catch (error: any) {
       let errorMessage = "회원가입 실패";
 
